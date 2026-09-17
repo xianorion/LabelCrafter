@@ -1,10 +1,12 @@
-# Shopify Label Parser
+# ParseLab
 
-This app helps you upload PDF shipping labels or Shopify packing slips, extract the shipping address, preview it in a printable layout, and export it to a Word document.
+ParseLab bulk parses Etsy and Shopify packing-slip PDFs, extracts customer addresses, lays them out as printable labels, and exports them to a Word document.
+
+Your address, processed—not stored. We process customer addresses in real time when needed, without permanently storing them in our database. Less data retained means greater privacy for your customers.
 
 ## What it does
 
-- Upload one or more PDF files
+- Upload one or more Etsy or Shopify packing-slip PDFs
 - Extract the shipping address from the document text
 - Show a live preview of each label
 - Adjust size, position, and spacing for better print alignment

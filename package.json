@@ -1,5 +1,5 @@
 {
-  "name": "shopify-label-parser",
+  "name": "parselab",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,6 +11,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "docx": "^9.7.1",
     "file-saver": "^2.0.5",
     "pdfjs-dist": "^6.1.200",
@@ -31,6 +32,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "vite": "^8.1.1"

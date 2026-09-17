@@ -1,5 +1,3 @@
-import React from 'react'
-
 function PreviewSheetLabel({
   address,
   keyId,
@@ -9,11 +7,12 @@ function PreviewSheetLabel({
   selected,
   onSelect,
   onMoveStart,
+  style,
 }) {
   const lines = typeof address === 'string' ? address.split(/\r?\n|\\n/) : []
 
   return (
-    <div className={`preview-sheet-label ${selected ? 'selected' : ''}`} onClick={() => onSelect(keyId)}>
+    <div className={`preview-sheet-label ${selected ? 'selected' : ''}`} style={style} onClick={() => onSelect(keyId)}>
       <button
         type="button"
         className="preview-drag-handle"

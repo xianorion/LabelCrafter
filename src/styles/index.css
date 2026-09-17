@@ -109,3 +109,35 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+:root {
+  --paper: #e5e2d9;
+  --paper-deep: #d5d2c8;
+  --paper-light: #efede6;
+  --ink: #3f403b;
+  --ink-soft: #696a62;
+  --rule: #aaa9a0;
+  --rust: #93634c;
+  --rust-dark: #754c3a;
+  --shadow-ink: rgba(63, 64, 59, 0.2);
+  --dot: rgba(63, 64, 59, 0.16);
+  --sans: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --heading: 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'Courier New', Courier, monospace;
+  color: var(--ink);
+  background: var(--paper);
+  font: 16px/1.45 var(--sans);
+  color-scheme: light;
+}
+
+body {
+  min-width: 320px;
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 0.8px, transparent 0.8px);
+  background-size: 9px 9px;
+}
+
+#root {
+  border-color: var(--rule);
+  background: transparent;
+}
