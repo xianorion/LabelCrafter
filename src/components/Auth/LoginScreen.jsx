@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { TIER_CONFIG } from '../../config/tierConfig'
 import SubscriptionView from './SubscriptionView'
+import PrivacyPolicyPage from '../PrivacyPolicyPage'
 import '../../styles/LoginScreen.css'
 import '../../styles/HelpModal.css'
 
@@ -21,6 +22,10 @@ export default function LoginScreen() {
   const [error, setError] = useState('')
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [showPricing, setShowPricing] = useState(new URLSearchParams(window.location.search).get('route') === 'pricing')
+
+  if (window.location.pathname === '/privacy') {
+    return <PrivacyPolicyPage />
+  }
 
   const openPricing = () => {
     window.history.pushState({}, '', '?route=pricing')
@@ -143,6 +148,10 @@ export default function LoginScreen() {
           {isSigningIn ? 'Connecting...' : 'Try LabelCrafter Free'} <span aria-hidden="true">→</span>
         </button>
       </section>
+
+      <footer className="site-footer">
+        <a href="/privacy">Privacy Policy</a>
+      </footer>
     </main>
   )
 }
