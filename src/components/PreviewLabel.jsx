@@ -9,11 +9,13 @@ function PreviewLabel({
   selected,
   onSelect,
   onMoveStart,
+  style,
 }) {
-  const lines = typeof address === 'string' ? address.split(/\r?\n|\\n/) : []
+  const addressText = typeof address === 'string' ? address : address?.text || ''
+  const lines = addressText.split(/\r?\n|\\n/)
 
   return (
-    <div className={`preview-card ${selected ? 'selected' : ''}`} onClick={() => onSelect(keyId)}>
+    <div className={`preview-card ${selected ? 'selected' : ''}`} style={style} onClick={() => onSelect(keyId)}>
       <button
         type="button"
         className="preview-drag-handle"

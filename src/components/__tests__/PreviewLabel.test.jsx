@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
-import PreviewLabel from './PreviewLabel'
+import PreviewLabel from '../PreviewLabel'
 
 describe('PreviewLabel', () => {
   it('renders the address and responds to selection and move events', () => {

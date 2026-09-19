@@ -1,6 +1,6 @@
 import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
-import PreviewControls from './PreviewControls'
+import PreviewControls from '../PreviewControls'
 
 describe('PreviewControls', () => {
   it('renders the controls and fires the callback for global scaling toggle', () => {
