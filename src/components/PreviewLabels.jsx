@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabaseClient'
+import { TIER_CONFIG } from '../config/tierConfig'
 import PreviewControls from './PreviewControls'
-import PreviewSheetLabel from './PreviewSheetLabel'
-import { getLabelPosition, getLabelScale, getPreviewPages } from '../utils/previewLogic'
+import PrintableLabelSheet from './PrintableLabelSheet'
 
 function LayoutField({ id, label, value, onChange, disabled, suffix }) {
+  const isIntegerField = id === 'label-columns' || id === 'label-rows'
+
   return (
     <label className={`layout-field ${disabled ? 'is-locked' : ''}`} htmlFor={id}>
       <span>{label}</span>
-      {disabled && <small>Premium Feature</small>}
+      {disabled && <small>Available with Hobby</small>}
       <div className="layout-field-input">
-        <input id={id} type="number" min="1" step="0.1" value={value} onChange={onChange} disabled={disabled} />
+        <input id={id} type="number" min="1" step={isIntegerField ? 1 : 0.1} value={value} onChange={onChange} disabled={disabled} inputMode={isIntegerField ? 'numeric' : 'decimal'} />
         <span>{suffix}</span>
       </div>
     </label>
@@ -19,12 +19,15 @@ function LayoutField({ id, label, value, onChange, disabled, suffix }) {
 }
 
 function Paywall({ onClose }) {
+  const { tierConfig } = useAuth()
+  const isUnlimited = tierConfig.addressLimit === Infinity
+
   return (
     <div className="paywall-overlay" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
       <div className="paywall-card">
         <span className="paywall-badge">Monthly limit reached</span>
-        <h2 id="paywall-title">Your free parse is used</h2>
-        <p>You have run out of free parses for this month. Upgrade to Premium for unlimited labels!</p>
+        <h2 id="paywall-title">{isUnlimited ? 'This import could not be started' : `You've processed all ${tierConfig.addressLimit} addresses included with the ${tierConfig.name} plan.`}</h2>
+        <p>{isUnlimited ? 'Please try again in a moment.' : tierConfig.name === TIER_CONFIG.free.name ? `Upgrade to Hobby to process up to ${TIER_CONFIG.hobby.addressLimit} addresses per month.` : 'Upgrade to Unlimited for unlimited address processing.'}</p>
         <div className="paywall-actions">
           <button type="button" className="export-button" onClick={onClose}>Review my labels</button>
           <button type="button" className="secondary-button" onClick={onClose}>Not now</button>
@@ -51,60 +54,18 @@ export default function PreviewLabels({
   onToggleGlobalScale,
   onScaleChange,
   onLineSpacingChange,
-  usageRevision,
   showPaywall,
   onClosePaywall,
   printLayout,
 }) {
-  const { user } = useAuth()
-  const [tier, setTier] = useState('basic')
-  const [parseCount, setParseCount] = useState(0)
-  const [lastResetDate, setLastResetDate] = useState(null)
-  const [usageLoading, setUsageLoading] = useState(true)
-
-  useEffect(() => {
-    let mounted = true
-
-    const fetchAccountDetails = async () => {
-      if (!user) {
-        return
-      }
-
-      setUsageLoading(true)
-      const [{ data: tierData, error: tierError }, { data: usageData, error: usageError }] = await Promise.all([
-        supabase.from('user_tiers').select('tier').eq('user_id', user.id).maybeSingle(),
-        supabase.from('user_usage').select('parse_count, last_reset_date').eq('user_id', user.id).maybeSingle(),
-      ])
-
-      if (!mounted) {
-        return
-      }
-
-      if (!tierError && (tierData?.tier === 'premium' || tierData?.tier === 'basic')) {
-        setTier(tierData.tier)
-      }
-      if (!usageError && usageData) {
-        setParseCount(usageData.parse_count ?? 0)
-        setLastResetDate(usageData.last_reset_date ?? null)
-      }
-      setUsageLoading(false)
-    }
-
-    fetchAccountDetails()
-
-    return () => {
-      mounted = false
-    }
-  }, [user, usageRevision])
+  const { tierConfig, tierLoading, addressesProcessed, addressesRemaining, lastResetDate, usageLoading, addressLimit } = useAuth()
 
   if (!isOpen) {
     return null
   }
 
-  const isPremium = tier === 'premium'
-  const { labelWidth, labelHeight, columns, rows, setLabelWidth, setLabelHeight, setColumns, setRows } = printLayout
-  const labelsPerPage = columns * rows
-  const pages = getPreviewPages(addresses, labelsPerPage)
+  const canResizeLabels = !tierLoading && tierConfig.canResizeLabels
+  const { labelWidth, labelHeight, columns, rows, setLabelWidth, setLabelHeight, setColumns, setRows, pageWidth, pageHeight, labelsPerPage } = printLayout
   const selectedScale = applyScaleGlobally ? globalScale : selectedLabel ? labelScales[selectedLabel] || globalScale : globalScale
 
   return (
@@ -113,7 +74,7 @@ export default function PreviewLabels({
         <div className="preview-modal-header">
           <div>
             <h3 id="preview-title">Label preview</h3>
-            <p>Review the sheet layout before exporting to Word.</p>
+            <p>Review the sheet layout before printing.</p>
           </div>
           <div className="preview-modal-actions">
             <button type="button" className="secondary-button" onClick={() => window.print()}>Print</button>
@@ -124,18 +85,20 @@ export default function PreviewLabels({
         <div className="preview-settings" aria-label="Preview layout settings">
           <div className="preview-settings-heading">
             <div>
-              <strong>{isPremium ? 'Premium layout controls' : 'Basic layout'}</strong>
-              <span>{usageLoading ? 'Loading usage...' : `${parseCount} parse${parseCount === 1 ? '' : 's'} used this month`}</span>
+              <strong>{tierLoading ? 'Checking your plan...' : `${tierConfig.name} layout controls`}</strong>
+              <span>{usageLoading ? 'Loading usage...' : tierConfig.addressLimit === Infinity ? `${addressesProcessed ?? 0} addresses processed · Unlimited` : `${addressesProcessed ?? 0} / ${addressLimit ?? tierConfig.addressLimit} addresses processed · ${addressesRemaining ?? 0} remaining`}</span>
             </div>
-            <span className={`tier-badge ${isPremium ? 'premium' : ''}`}>{isPremium ? 'Premium' : 'Basic'}</span>
+            <span className={`tier-badge ${canResizeLabels ? 'paid' : ''}`}>{tierConfig.name}</span>
           </div>
           <div className="layout-fields">
-            <LayoutField id="label-width" label="Width" value={labelWidth} onChange={(event) => setLabelWidth(Number(event.target.value))} disabled={!isPremium} suffix="in" />
-            <LayoutField id="label-height" label="Height" value={labelHeight} onChange={(event) => setLabelHeight(Number(event.target.value))} disabled={!isPremium} suffix="in" />
-            <LayoutField id="label-columns" label="Columns" value={columns} onChange={(event) => setColumns(Math.max(1, Number(event.target.value)))} disabled={!isPremium} suffix="" />
-            <LayoutField id="label-rows" label="Rows" value={rows} onChange={(event) => setRows(Math.max(1, Number(event.target.value)))} disabled={!isPremium} suffix="" />
+            <LayoutField id="label-width" label="Width" value={labelWidth} onChange={(event) => setLabelWidth(Number(event.target.value))} disabled={!canResizeLabels} suffix="in" />
+            <LayoutField id="label-height" label="Height" value={labelHeight} onChange={(event) => setLabelHeight(Number(event.target.value))} disabled={!canResizeLabels} suffix="in" />
+            <LayoutField id="label-columns" label="Columns" value={columns} onChange={(event) => setColumns(Number(event.target.value))} disabled={!canResizeLabels} suffix="" />
+            <LayoutField id="label-rows" label="Rows" value={rows} onChange={(event) => setRows(Number(event.target.value))} disabled={!canResizeLabels} suffix="" />
           </div>
-          <p className="layout-summary">{labelsPerPage} labels per page · {columns} columns × {rows} rows</p>
+          <p className="layout-summary">Letter portrait · {pageWidth} × {pageHeight} in · {labelsPerPage} labels per page · {columns} columns × {rows} rows</p>
+          {!printLayout.fitsPage && <p className="layout-warning" role="alert">These label dimensions do not fit on an 8.5 × 11 inch page with the current rows, columns, spacing, and margins.</p>}
+          {!canResizeLabels && <p className="layout-upgrade-note">Custom label sizing is available with Hobby. Upgrade to unlock it.</p>}
           {lastResetDate && <p className="layout-reset">Usage reset {new Date(lastResetDate).toLocaleDateString()}</p>}
         </div>
 
@@ -149,38 +112,24 @@ export default function PreviewLabels({
             onLineSpacingChange={onLineSpacingChange}
             onGlobalMoveStart={onGlobalMoveStart}
             selectedLabel={selectedLabel}
+            canResizeLabels={canResizeLabels}
           />
         </div>
 
         <div className="preview-modal-body">
-          {pages.map((page, pageIndex) => (
-            <div className="preview-sheet" key={`preview-${pageIndex}`}>
-              <div className="preview-sheet-title">Page {pageIndex + 1}</div>
-              <div className="preview-sheet-grid" style={{ gridTemplateColumns: `repeat(${columns}, ${labelWidth}in)`, gridTemplateRows: `repeat(${rows}, ${labelHeight}in)` }}>
-                {page.pageItems.map((address, itemIndex) => {
-                  const key = `modal-preview-${pageIndex}-${itemIndex}`
-                  const position = getLabelPosition(labelPositions, key)
-                  const scale = getLabelScale(labelScales, globalScale, key, applyScaleGlobally)
-
-                  return (
-                    <PreviewSheetLabel
-                      key={key}
-                      address={address}
-                      keyId={key}
-                      style={{ width: `${labelWidth}in`, height: `${labelHeight}in` }}
-                      position={{ x: position.x + globalLabelOffset.x, y: position.y + globalLabelOffset.y }}
-                      scale={scale}
-                      lineSpacing={globalLineSpacing}
-                      selected={selectedLabel === key}
-                      onSelect={onSelectLabel}
-                      onMoveStart={onLabelMoveStart}
-                    />
-                  )
-                })}
-                {page.emptySlots.map((_, index) => <div className="preview-sheet-label empty-slot" key={`preview-empty-${pageIndex}-${index}`} style={{ width: `${labelWidth}in`, height: `${labelHeight}in` }} />)}
-              </div>
-            </div>
-          ))}
+          <PrintableLabelSheet
+            addresses={addresses}
+            layout={printLayout}
+            labelPositions={labelPositions}
+            labelScales={labelScales}
+            globalScale={globalScale}
+            applyScaleGlobally={applyScaleGlobally}
+            globalLineSpacing={globalLineSpacing}
+            globalLabelOffset={globalLabelOffset}
+            selectedLabel={selectedLabel}
+            onSelectLabel={onSelectLabel}
+            onLabelMoveStart={onLabelMoveStart}
+          />
         </div>
       </div>
       {showPaywall && <Paywall onClose={onClosePaywall} />}

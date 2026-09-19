@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { GlobalWorkerOptions } from 'pdfjs-dist'
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 import { useAuth } from './context/AuthContext'
@@ -6,24 +7,38 @@ import PreviewLabels from './components/PreviewLabels'
 import ParserHeader from './components/ParserHeader'
 import ParserUpload from './components/ParserUpload'
 import ParserWorkspace from './components/ParserWorkspace'
+import PrintableLabelSheet from './components/PrintableLabelSheet'
 import { useLabelLayout } from './hooks/useLabelLayout'
 import { usePdfParsing } from './hooks/usePdfParsing'
 import { usePrintLayout } from './hooks/usePrintLayout'
-import { generateWordDoc } from './utils/wordExport'
 import './styles/App.css'
 
 GlobalWorkerOptions.workerSrc = pdfWorker
 
 function App() {
-  const { user } = useAuth()
+  const { user, tierConfig, tierLoading } = useAuth()
   const [showPreview, setShowPreview] = useState(false)
   const [showPaywall, setShowPaywall] = useState(false)
-  const labelLayout = useLabelLayout()
-  const printLayout = usePrintLayout()
+  const canResizeLabels = !tierLoading && tierConfig.canResizeLabels
+  const labelLayout = useLabelLayout(canResizeLabels)
+  const printLayout = usePrintLayout(canResizeLabels)
   const parsing = usePdfParsing(user, () => setShowPaywall(true))
 
+  const handleRemoveAddress = (addressId) => {
+    parsing.removeAddress(addressId)
+    if (labelLayout.selectedLabel === addressId) {
+      labelLayout.setSelectedLabel(null)
+    }
+  }
+
+  const handleClearAllAddresses = () => {
+    parsing.clearAllAddresses()
+    labelLayout.setSelectedLabel(null)
+  }
+
   return (
-    <div className="app-shell">
+    <>
+      <div className="app-shell">
       <ParserHeader />
       <ParserUpload
         sourcePlatform={parsing.sourcePlatform}
@@ -57,14 +72,6 @@ function App() {
         >
           Preview labels
         </button>
-        <button
-          type="button"
-          className="export-button"
-          onClick={() => generateWordDoc(parsing.extractedAddresses, printLayout, labelLayout)}
-          disabled={parsing.extractedAddresses.length === 0}
-        >
-          Export Word Doc
-        </button>
       </div>
 
       {parsing.parseError && <div className="parse-error" role="alert">{parsing.parseError}</div>}
@@ -81,6 +88,8 @@ function App() {
         globalLabelOffset={labelLayout.globalLabelOffset}
         onSelectLabel={labelLayout.setSelectedLabel}
         onLabelMoveStart={labelLayout.handleLabelDragStart}
+        onRemoveAddress={handleRemoveAddress}
+        onClearAll={handleClearAllAddresses}
         columns={printLayout.columns}
         rows={printLayout.rows}
         labelWidth={printLayout.labelWidth}
@@ -109,7 +118,24 @@ function App() {
         showPaywall={showPaywall}
         onClosePaywall={() => setShowPaywall(false)}
       />
-    </div>
+      </div>
+      {createPortal(
+        <div className="print-only" aria-hidden="true">
+          <PrintableLabelSheet
+            addresses={parsing.extractedAddresses}
+            layout={printLayout}
+            labelPositions={labelLayout.labelPositions}
+            labelScales={labelLayout.labelScales}
+            globalScale={labelLayout.globalScale}
+            applyScaleGlobally={labelLayout.applyScaleGlobally}
+            globalLineSpacing={labelLayout.globalLineSpacing}
+            globalLabelOffset={labelLayout.globalLabelOffset}
+            interactive={false}
+          />
+        </div>,
+        document.body,
+      )}
+    </>
   )
 }
 

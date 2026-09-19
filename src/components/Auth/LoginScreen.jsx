@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { HelpGuideSteps } from './HelpModal'
+import { TIER_CONFIG } from '../../config/tierConfig'
 import SubscriptionView from './SubscriptionView'
 import '../../styles/LoginScreen.css'
 import '../../styles/HelpModal.css'
@@ -51,47 +51,97 @@ export default function LoginScreen() {
   return (
     <main className="login-screen">
       <header className="login-nav">
-        <a className="brand-lockup" href="/" aria-label="ParseLab home">
+        <a className="brand-lockup" href="/" aria-label="LabelCrafter home">
           <img className="brand-logo" src="/ParseLabLogo.svg" alt="" />
-          <span>ParseLab</span>
+          <span>LabelCrafter</span>
         </a>
         <nav aria-label="Account actions">
+          <a className="nav-link nav-anchor" href="#how-it-works">How It Works</a>
           <button type="button" className="nav-link" onClick={openPricing}>
             Pricing
           </button>
+          <button type="button" className="nav-link" onClick={handleGoogleSignIn}>Sign In</button>
+          <button type="button" className="nav-cta" onClick={handleGoogleSignIn}>Try Free</button>
         </nav>
       </header>
 
       <section className="login-hero" aria-labelledby="login-title">
         <div className="login-hero-copy">
-          <p className="login-kicker">Shipping, without the busywork</p>
-          <h1 id="login-title">Turn packing slips into labels in a few clicks.</h1>
-          <p className="login-copy">Bulk parse Etsy and Shopify packing slips, then turn every customer address into printable labels in a few clicks.</p>
+          <p className="login-kicker">A tiny workshop for finished labels</p>
+          <p className="hero-brand-name">LabelCrafter</p>
+          <h1 id="login-title">Turn packing slips into printable labels.</h1>
+          <p className="login-copy">Upload your packing slips. LabelCrafter extracts the customer addresses and turns them into clean, print-ready labels in seconds.</p>
           <div className="hero-actions">
-            <button type="button" className="hero-cta" onClick={handleGoogleSignIn} disabled={isSigningIn}>
+            <button type="button" className="hero-cta" aria-label="Try LabelCrafter Free, sign in with Google" onClick={handleGoogleSignIn} disabled={isSigningIn}>
               <GoogleIcon />
-              <span>{isSigningIn ? 'Connecting to Google...' : 'Sign in with Google'}</span>
+              <span>{isSigningIn ? 'Connecting to Google...' : 'Try LabelCrafter Free'}</span>
               <span aria-hidden="true">→</span>
             </button>
-            <button type="button" className="rate-link" onClick={openPricing}>Check subscription rates</button>
+            <a className="rate-link" href="#how-it-works">See How It Works</a>
           </div>
           {error && <p className="login-error" role="alert">{error}</p>}
-          <p className="login-footnote">Start with one free parse. No card required.</p>
+          <p className="login-footnote">{TIER_CONFIG.free.addressLimit} free addresses every month · No credit card required</p>
           <div className="privacy-note">
             <strong>Your address, processed—not stored.</strong>
-            <p>We process customer addresses in real time when needed, without permanently storing them in our database. Less data retained means greater privacy for your customers.</p>
+            <p>Customer addresses are processed when needed without permanently storing them in the database.</p>
           </div>
         </div>
 
-        <div className="login-hero-art">
-          <img src="/images/ParseLabParserSnapshot.png" alt="ParseLab parsing workspace with printable address labels" />
+        <div className="login-hero-art" aria-label="Packing slip transformed into a finished address label">
+          <div className="craft-illustration">
+            <div className="craft-paper"><span>PACKING SLIP</span><b>John Smith</b><small>123 Main Street</small></div>
+            <div className="craft-arrow" aria-hidden="true">↓</div>
+            <div className="craft-label"><span>LABEL</span><b>John Smith</b><small>123 Main Street</small></div>
+          </div>
         </div>
       </section>
 
-      <section className="help-empty-state login-guide" aria-labelledby="login-guide-title">
-        <h2 id="login-guide-title">How to prepare your labels</h2>
-        <p>Bring Etsy or Shopify packing-slip PDFs here and turn them into printable labels.</p>
-        <HelpGuideSteps compact />
+      <section className="landing-section problem-section" aria-labelledby="problem-title">
+        <p className="section-kicker">Skip the busywork</p>
+        <h2 id="problem-title">Still copying addresses by hand?</h2>
+        <p className="section-intro">You already have the customer's address on the packing slip. Why spend time copying it into another document just to print a label? LabelCrafter handles the repetitive part for you.</p>
+        <div className="problem-grid">
+          <article><h3>No more copy &amp; paste</h3><p>Stop manually transferring addresses from packing slips.</p></article>
+          <article><h3>No more Excel mail merges</h3><p>Skip the spreadsheet setup and formatting headaches.</p></article>
+          <article><h3>No thermal printer required</h3><p>Print on standard paper or compatible label sheets.</p></article>
+        </div>
+      </section>
+
+      <section className="landing-section steps-section" id="how-it-works" aria-labelledby="steps-title">
+        <p className="section-kicker">From messy to ready</p>
+        <h2 id="steps-title">From packing slip to label in three steps.</h2>
+        <div className="steps-grid">
+          <article><span>01</span><h3>Upload</h3><p>Upload your packing slip PDFs.</p></article>
+          <article><span>02</span><h3>Craft</h3><p>LabelCrafter finds and organizes the customer shipping addresses.</p></article>
+          <article><span>03</span><h3>Print</h3><p>Generate clean, print-ready labels.</p></article>
+        </div>
+      </section>
+
+      <section className="landing-section feature-section" aria-labelledby="feature-title">
+        <p className="section-kicker">The useful stuff</p>
+        <h2 id="feature-title">Everything you need to make a label.</h2>
+        <div className="feature-grid">
+          <article><h3>Batch PDF Processing</h3><p>Process multiple packing slips in one go.</p></article>
+          <article><h3>Print-Ready Labels</h3><p>Generate labels sized for real-world printing.</p></article>
+          <article><h3>Custom Layouts</h3><p>Hobby and Unlimited users can customize label layouts.</p></article>
+        </div>
+      </section>
+
+      <section className="landing-section pricing-section" aria-labelledby="landing-pricing-title">
+        <p className="section-kicker">Simple plans</p>
+        <h2 id="landing-pricing-title">Pick your pace.</h2>
+        <div className="landing-pricing-grid">
+          <article><h3>{TIER_CONFIG.free.name}</h3><strong>$0<small>/month</small></strong><p>{TIER_CONFIG.free.addressLimit} addresses/month</p></article>
+          <article><h3>{TIER_CONFIG.hobby.name}</h3><strong>$5<small>/month</small></strong><p>{TIER_CONFIG.hobby.addressLimit} addresses/month · Custom label sizing</p></article>
+          <article><h3>{TIER_CONFIG.unlimited.name}</h3><strong>$10<small>/month</small></strong><p>Unlimited addresses · Custom label sizing</p></article>
+        </div>
+      </section>
+
+      <section className="landing-final-cta" aria-labelledby="final-cta-title">
+        <h2 id="final-cta-title">Ready to stop copying addresses?</h2>
+        <button type="button" className="hero-cta" onClick={handleGoogleSignIn} disabled={isSigningIn}>
+          {isSigningIn ? 'Connecting...' : 'Try LabelCrafter Free'} <span aria-hidden="true">→</span>
+        </button>
       </section>
     </main>
   )

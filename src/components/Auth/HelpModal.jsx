@@ -93,7 +93,7 @@ export default function HelpModal({ isOpen, onClose }) {
         <header className="help-modal-header">
           <div>
             <p className="help-modal-kicker">Merchant guide</p>
-            <h2 id="help-modal-title">How to Use ParseLab</h2>
+            <h2 id="help-modal-title">How to Use LabelCrafter</h2>
           </div>
           <button type="button" className="help-close-button" aria-label="Close help guide" onClick={closeModal}>×</button>
         </header>

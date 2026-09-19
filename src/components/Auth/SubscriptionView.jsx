@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import '../../styles/SubscriptionView.css'
 
-export default function SubscriptionView({ onBack, currentTier = null }) {
+export default function SubscriptionView({ onBack, currentTier = null, tierLoading = false }) {
   const { signInWithGoogle, user } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [error, setError] = useState('')
-  const isFreePlan = currentTier === 'basic'
-  const isPremiumPlan = currentTier === 'premium'
-  const isCheckingCurrentPlan = Boolean(user && !currentTier)
+  const isFreePlan = currentTier === 'free'
+  const isHobbyPlan = currentTier === 'hobby'
+  const isUnlimitedPlan = currentTier === 'unlimited'
+  const isCheckingCurrentPlan = Boolean(user && tierLoading)
 
   const startGoogleFlow = async (redirectPath) => {
     if (user) {
@@ -34,51 +35,77 @@ export default function SubscriptionView({ onBack, currentTier = null }) {
         ← {user ? 'Back to account' : 'Back to sign in'}
       </button>
       <section className="subscription-header" aria-labelledby="subscription-title">
-        <p className="login-kicker">Choose your plan</p>
-        <h1 id="subscription-title">A simple plan for every shipping desk.</h1>
-        <p>Start free with one monthly parse, or unlock unlimited labels and custom layouts with Premium.</p>
+        <p className="login-kicker">Ready to get started?</p>
+        <h1 id="subscription-title">Choose your plan</h1>
+        <p>Choose the amount of label crafting that fits your shop.</p>
       </section>
 
       <div className="subscription-grid">
         <article className="subscription-card">
           <p className="subscription-card-label">For trying it out</p>
-          <h2>Free Tier</h2>
+          <h2>Free</h2>
           <strong className="subscription-price">$0 <small>/ month</small></strong>
           <ul>
-            <li>1 parse per month</li>
-            <li>Standard label layout</li>
-            <li>Google sign-in included</li>
+            <li>25 addresses per month</li>
+            <li>PDF address extraction</li>
+            <li>Printable labels</li>
+            <li>Standard label sizing</li>
+            <li>No credit card required</li>
           </ul>
           {isCheckingCurrentPlan ? (
             <p className="subscription-option-note">Checking your current plan...</p>
           ) : isFreePlan ? (
             <div className="current-plan-label">Current plan</div>
           ) : user ? (
-            <p className="subscription-option-note">Your Premium plan is active. Contact support to change plans.</p>
+            <p className="subscription-option-note">Your {currentTier} plan is active. Contact support to change plans.</p>
           ) : (
             <button type="button" className="subscription-button secondary" onClick={() => startGoogleFlow('/')} disabled={isSigningIn}>
-              {isSigningIn ? 'Connecting...' : 'Continue with Google'}
+              {isSigningIn ? 'Connecting...' : 'Start Free'}
             </button>
           )}
         </article>
 
         <article className="subscription-card featured">
           <span className="subscription-badge">Recommended</span>
-          <p className="subscription-card-label">For growing shops</p>
-          <h2>Paid Subscription Tier</h2>
-          <strong className="subscription-price">$5.99 <small>/ month</small></strong>
+          <p className="subscription-card-label">For regular batches</p>
+          <h2>Hobby</h2>
+          <strong className="subscription-price">$5 <small>/ month</small></strong>
           <ul>
-            <li>Unlimited label parses</li>
-            <li>Custom dimensions and grids</li>
-            <li>Flexible preview controls</li>
+            <li>250 addresses per month</li>
+            <li>PDF address extraction</li>
+            <li>Printable labels</li>
+            <li>Custom label resizing</li>
+            <li>Excellet for Hobbists</li>
           </ul>
           {isCheckingCurrentPlan ? (
             <p className="subscription-option-note">Checking your current plan...</p>
-          ) : isPremiumPlan ? (
+          ) : isHobbyPlan ? (
             <div className="current-plan-label featured-current">Current plan</div>
           ) : (
             <button type="button" className="subscription-button primary" onClick={() => startGoogleFlow('/?route=billing')} disabled={isSigningIn}>
-              {isSigningIn ? 'Connecting...' : user ? 'Continue to billing' : 'Sign in to set up billing'}
+              {isSigningIn ? 'Connecting...' : user ? 'Start Crafting' : 'Start Crafting'}
+            </button>
+          )}
+        </article>
+
+        <article className="subscription-card">
+          <p className="subscription-card-label">For bigger batches</p>
+          <h2>Unlimited</h2>
+          <strong className="subscription-price">$10 <small>/ month</small></strong>
+          <ul>
+            <li>Unlimited addresses</li>
+            <li>PDF address extraction</li>
+            <li>Printable labels</li>
+            <li>Custom label resizing</li>
+            <li>For higher-volume sellers and creators</li>
+          </ul>
+          {isCheckingCurrentPlan ? (
+            <p className="subscription-option-note">Checking your current plan...</p>
+          ) : isUnlimitedPlan ? (
+            <div className="current-plan-label">Current plan</div>
+          ) : (
+            <button type="button" className="subscription-button secondary" onClick={() => startGoogleFlow('/?route=billing')} disabled={isSigningIn}>
+            {isSigningIn ? 'Connecting...' : 'Go Unlimited'}
             </button>
           )}
         </article>

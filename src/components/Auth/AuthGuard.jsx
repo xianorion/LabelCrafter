@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../lib/supabaseClient'
 import HelpModal from './HelpModal'
 import AccountView from './AccountView'
 import BillingSetup from './BillingSetup'
@@ -8,10 +7,7 @@ import LoginScreen from './LoginScreen'
 import SubscriptionView from './SubscriptionView'
 
 export default function AuthGuard({ children }) {
-  const { user, loading: authLoading, signOut } = useAuth()
-  const [parseCount, setParseCount] = useState(null)
-  const [tier, setTier] = useState(null)
-  const [usageLoading, setUsageLoading] = useState(false)
+  const { user, loading: authLoading, signOut, tier, tierConfig, tierLoading, addressesProcessed, addressesRemaining, addressLimit, usageLoading } = useAuth()
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const [route, setRoute] = useState(new URLSearchParams(window.location.search).get('route'))
 
@@ -21,40 +17,6 @@ export default function AuthGuard({ children }) {
     window.addEventListener('popstate', handleRouteChange)
     return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
-
-  useEffect(() => {
-    let mounted = true
-
-    const fetchUsage = async () => {
-      if (!user) {
-        setParseCount(null)
-        return
-      }
-
-      setUsageLoading(true)
-      const [{ data: usageData, error: usageError }, { data: tierData, error: tierError }] = await Promise.all([
-        supabase.from('user_usage').select('parse_count').eq('user_id', user.id).maybeSingle(),
-        supabase.from('user_tiers').select('tier').eq('user_id', user.id).maybeSingle(),
-      ])
-
-      if (mounted) {
-        setParseCount(usageError ? null : usageData?.parse_count ?? 0)
-        setTier(tierError ? null : tierData?.tier ?? 'basic')
-        setUsageLoading(false)
-      }
-    }
-
-    fetchUsage()
-    const handleUsageUpdated = () => {
-      fetchUsage()
-    }
-    window.addEventListener('usage-updated', handleUsageUpdated)
-
-    return () => {
-      mounted = false
-      window.removeEventListener('usage-updated', handleUsageUpdated)
-    }
-  }, [user])
 
   if (authLoading) {
     return <div className="auth-loading" role="status">Loading your workspace...</div>
@@ -72,7 +34,7 @@ export default function AuthGuard({ children }) {
   }
 
   if (route === 'pricing') {
-    return <SubscriptionView currentTier={tier} onBack={() => {
+    return <SubscriptionView currentTier={tier} tierLoading={tierLoading} onBack={() => {
       const nextRoute = user ? 'account' : null
       window.history.pushState({}, '', nextRoute ? '?route=account' : window.location.pathname)
       setRoute(nextRoute)
@@ -83,7 +45,11 @@ export default function AuthGuard({ children }) {
     return (
       <AccountView
         tier={tier}
-        parseCount={parseCount}
+        tierConfig={tierConfig}
+        tierLoading={tierLoading}
+        addressesProcessed={addressesProcessed}
+        addressesRemaining={addressesRemaining}
+        addressLimit={addressLimit}
         usageLoading={usageLoading}
         onBack={() => {
           window.history.pushState({}, '', window.location.pathname)
@@ -98,15 +64,19 @@ export default function AuthGuard({ children }) {
   }
 
   return (
-    <>
+    <div className="app-ui">
       <div className="account-bar">
+        <a className="account-brand" href="/" aria-label="LabelCrafter home">
+          <img src="/ParseLabLogo.svg" alt="" />
+          <strong>LabelCrafter</strong>
+        </a>
         <span>{user.user_metadata?.full_name || user.email}</span>
         <span className="usage-count">
           {usageLoading
             ? 'Checking parse allowance...'
-            : tier === 'premium'
-              ? 'Unlimited parses'
-              : `${Math.max(0, 1 - (parseCount ?? 0))} / 1 parses remaining`}
+            : tierConfig.addressLimit === Infinity
+              ? `${addressesProcessed ?? 0} addresses processed · Unlimited addresses`
+              : `${addressesProcessed ?? 0} / ${addressLimit ?? tierConfig.addressLimit} addresses processed`}
         </span>
         <button type="button" className="help-toolbar-button" onClick={() => setIsHelpModalOpen(true)}>
           <span className="help-circle-icon" aria-hidden="true">?</span>
@@ -122,6 +92,6 @@ export default function AuthGuard({ children }) {
       </div>
       {children}
       <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
-    </>
+    </div>
   )
 }

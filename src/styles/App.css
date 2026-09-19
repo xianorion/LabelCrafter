@@ -5,6 +5,10 @@
   gap: 24px;
 }
 
+.print-only {
+  display: none;
+}
+
 .hero-header {
   text-align: left;
 }
@@ -15,7 +19,50 @@
   letter-spacing: 0.24em;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #7c3aed;
+  color: var(--rust);
+}
+
+.account-bar {
+  justify-content: flex-start;
+  gap: 18px;
+  background: var(--paper-light);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+}
+
+.account-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+  color: var(--ink);
+  font-family: var(--heading);
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.account-brand img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: grayscale(1) contrast(1.15);
+}
+
+.account-bar .usage-count {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 0.76rem;
+}
+
+.account-bar .help-toolbar-button,
+.account-bar .sign-out-button {
+  color: var(--ink);
+}
+
+.account-bar .account-toolbar-button {
+  border-color: var(--rule);
+  background: var(--paper-deep);
+  color: var(--ink);
 }
 
 .subtitle {
@@ -212,6 +259,86 @@
   margin: 4px 0 0;
   color: #64748b;
   font-size: 0.85rem;
+}
+
+.address-panel-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.address-panel-heading h2 {
+  margin: 0;
+}
+
+.clear-addresses-button,
+.remove-address-button {
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.clear-addresses-button {
+  padding: 4px 0;
+  font-size: 0.8rem;
+}
+
+.remove-address-button {
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.clear-addresses-button:hover,
+.remove-address-button:hover,
+.clear-addresses-button:focus-visible,
+.remove-address-button:focus-visible {
+  background: #fce9e2;
+  color: #b44e38;
+}
+
+.clear-addresses-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(22, 61, 59, 0.35);
+}
+
+.clear-addresses-dialog {
+  width: min(100%, 420px);
+  padding: 26px;
+  border: 1px solid #d5e0d9;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 44px rgba(22, 61, 59, 0.16);
+}
+
+.clear-addresses-dialog h2 {
+  margin: 0;
+  color: #163d3b;
+  font-size: 1.35rem;
+}
+
+.clear-addresses-dialog p {
+  margin: 12px 0 0;
+  color: #55716b;
+  line-height: 1.55;
+}
+
+.clear-addresses-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 .preview-controls {
@@ -539,7 +666,7 @@
   text-transform: uppercase;
 }
 
-.tier-badge.premium {
+.tier-badge.paid {
   background: #dff7ed;
   color: #176b4a;
 }
@@ -608,6 +735,13 @@
 .layout-summary,
 .layout-reset {
   margin: 10px 0 0;
+}
+
+.layout-warning {
+  margin: 10px 0 0;
+  color: #a33d2b;
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .layout-reset {
@@ -690,17 +824,37 @@
 
 @media print {
   @page {
+    size: Letter;
     margin: 0;
   }
 
+  html,
   body {
+    width: 8.5in;
+    height: 11in;
     background: #fff;
-    margin: 0;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  .app-shell {
+  #root,
+  .app-ui {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+    width: 8.5in;
+    height: 11in;
+    margin: 0;
     padding: 0;
-    gap: 0;
+  }
+
+  .print-only .printable-label-sheet {
+    display: block !important;
+    width: 8.5in;
+    margin: 0;
+    padding: 0;
   }
 
   .hero-header,
@@ -710,38 +864,30 @@
   .panel-header,
   .page-label,
   .preview-sheet-title,
-  .preview-modal-header .secondary-button,
-  .preview-modal-overlay,
+  .preview-modal-header,
+  .preview-settings,
+  .preview-modal-actions,
   .preview-controls {
     display: none !important;
   }
 
-  .workspace {
-    display: block;
-  }
-
-  .panel {
-    box-shadow: none;
-    border: none;
-    padding: 0;
-  }
-
-  .preview-panel {
-    display: block;
-  }
-
-  .preview-page,
   .preview-sheet {
     border: none;
     padding: 0;
     background: #fff;
+    box-shadow: none;
+    page-break-after: always;
   }
 
   .preview-card,
   .preview-sheet-label {
     border: 1px solid #000;
-    min-height: 180px;
     page-break-inside: avoid;
+  }
+
+  .preview-sheet-label.empty-slot {
+    border: 0;
+    background: transparent;
   }
 
   .preview-drag-handle {
@@ -1044,7 +1190,112 @@
   border-radius: 0;
 }
 
-/* ParseLab's visual language: paper stock, monochrome ink, and printer marks. */
+.printable-label-sheet .preview-sheet-grid {
+  min-height: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.printable-label-sheet .preview-sheet,
+.printable-label-sheet .preview-sheet-label {
+  box-sizing: border-box;
+}
+
+.craft-illustration {
+  width: min(78%, 430px);
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  transform: rotate(-2deg);
+}
+
+.craft-paper,
+.craft-label {
+  width: min(100%, 270px);
+  display: grid;
+  gap: 7px;
+  padding: 22px;
+  box-sizing: border-box;
+  color: #163d3b;
+  text-align: left;
+}
+
+.craft-paper {
+  border: 1px dashed #9bb8a5;
+  background: #fffdf7;
+  transform: rotate(3deg);
+}
+
+.craft-label {
+  border: 2px solid #163d3b;
+  background: #fce9e2;
+  box-shadow: 8px 8px 0 rgba(22, 61, 59, 0.12);
+  transform: rotate(-2deg);
+}
+
+.craft-paper span,
+.craft-label span {
+  color: #e36b4e;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.craft-paper b,
+.craft-label b {
+  font-size: 1rem;
+}
+
+.craft-paper small,
+.craft-label small {
+  color: #55716b;
+}
+
+.craft-arrow {
+  color: #e36b4e;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.landing-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.landing-pricing-grid article {
+  min-height: 0;
+}
+
+.landing-pricing-grid strong {
+  display: block;
+  margin-top: 18px;
+  color: #163d3b;
+  font-size: 2rem;
+}
+
+.landing-pricing-grid strong small {
+  color: #6a8179;
+  font-size: 0.78rem;
+}
+
+.landing-final-cta {
+  width: min(100%, 1220px);
+  margin: 0 auto;
+  padding: 78px 0 30px;
+  text-align: center;
+}
+
+.landing-final-cta h2 {
+  margin: 0 0 24px;
+  color: #163d3b;
+  font-family: var(--heading);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+
+/* LabelCrafter's visual language: paper stock, monochrome ink, and printer marks. */
 #root {
   border-inline: 1px solid var(--rule);
 }
@@ -1056,17 +1307,9 @@
   color: var(--ink);
 }
 
-.app-shell::before {
-  position: absolute;
-  inset: 18px 20px auto;
-  height: 1px;
-  background: var(--ink);
-  content: '';
-  opacity: 0.55;
-}
 
 .hero-header {
-  padding: 30px 0 8px;
+  padding: 5px 0 8px;
 }
 
 .parser-brand {
@@ -1098,7 +1341,7 @@
   max-width: 780px;
   color: var(--ink);
   font-family: var(--heading);
-  font-size: clamp(2.05rem, 5vw, 4rem);
+  font-size: clamp(1.55rem, 3.2vw, 2.45rem);
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1.05;

@@ -51,9 +51,9 @@
 }
 
 .subscription-grid {
-  width: min(100%, 900px);
+  width: min(100%, 1180px);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
   margin: 0 auto;
 }
@@ -197,7 +197,7 @@
 }
 
 .subscription-error {
-  width: min(100%, 900px);
+  width: min(100%, 1180px);
   margin: 28px auto 0;
 }
 

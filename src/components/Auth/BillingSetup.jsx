@@ -9,21 +9,21 @@ export default function BillingSetup({ onBack }) {
   return (
     <main className="billing-screen">
       <div className="billing-card">
-        <p className="login-kicker">Premium setup</p>
-        <img className="billing-logo" src="/ParseLabLogo.svg" alt="ParseLab" />
-        <h1>Finish setting up Premium.</h1>
-        <p>You are signed in as <strong>{user.email}</strong>. Complete your Premium subscription to unlock unlimited label parsing and custom layouts.</p>
+        <p className="login-kicker">Subscription setup</p>
+        <img className="billing-logo" src="/ParseLabLogo.svg" alt="LabelCrafter" />
+        <h1>Finish setting up LabelCrafter.</h1>
+        <p>You are signed in as <strong>{user.email}</strong>. Continue to secure billing for your selected plan.</p>
         <div className="billing-summary">
           <div>
-            <span>Premium subscription</span>
-            <strong>$5.99 / month</strong>
+            <span>LabelCrafter subscription</span>
+            <strong>Plan selected at checkout</strong>
           </div>
-          <span>Unlimited parses</span>
+          <span>Printable labels</span>
         </div>
         <ul className="billing-features">
-          <li>Unlimited label parses</li>
-          <li>Custom label dimensions</li>
-          <li>Flexible columns and rows per page</li>
+          <li>PDF address extraction</li>
+          <li>Printable labels</li>
+          <li>Plan-specific features</li>
         </ul>
         <button type="button" className="subscription-button primary" onClick={() => setBillingStarted(true)}>Continue to secure billing</button>
         {billingStarted && <p className="billing-success" role="status">Your secure billing setup is ready to continue.</p>}

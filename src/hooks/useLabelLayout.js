@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export function useLabelLayout() {
+export function useLabelLayout(canResizeLabels = false) {
   const [labelPositions, setLabelPositions] = useState({})
   const [labelScales, setLabelScales] = useState({})
   const [selectedLabel, setSelectedLabel] = useState(null)
@@ -84,6 +84,10 @@ export function useLabelLayout() {
   }
 
   const handleSelectedScaleChange = (event) => {
+    if (!canResizeLabels) {
+      return
+    }
+
     const nextValue = Number(event.target.value)
 
     if (applyScaleGlobally) {

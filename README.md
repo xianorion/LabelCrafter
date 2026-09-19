@@ -1,6 +1,6 @@
-# ParseLab
+# LabelCrafter
 
-ParseLab bulk parses Etsy and Shopify packing-slip PDFs, extracts customer addresses, lays them out as printable labels, and exports them to a Word document.
+LabelCrafter turns packing slip PDFs from platforms such as Etsy and Shopify into clean, printable address labels, then exports them to a Word document.
 
 Your address, processed—not stored. We process customer addresses in real time when needed, without permanently storing them in our database. Less data retained means greater privacy for your customers.
 

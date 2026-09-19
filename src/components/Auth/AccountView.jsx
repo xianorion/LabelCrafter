@@ -1,9 +1,10 @@
 import { useAuth } from '../../context/AuthContext'
 import '../../styles/SubscriptionView.css'
 
-export default function AccountView({ tier, parseCount, usageLoading, onBack, onManagePlan }) {
+export default function AccountView({ tierConfig, tierLoading, addressesProcessed, addressesRemaining, addressLimit, usageLoading, onBack, onManagePlan }) {
   const { user } = useAuth()
-  const isPremium = tier === 'premium'
+  const isUnlimited = tierConfig.addressLimit === Infinity
+  const usageLabel = isUnlimited ? `${addressesProcessed ?? 0} addresses processed` : `${addressesProcessed ?? 0} / ${addressLimit ?? tierConfig.addressLimit} addresses processed`
 
   return (
     <main className="account-screen">
@@ -17,16 +18,16 @@ export default function AccountView({ tier, parseCount, usageLoading, onBack, on
       <section className="account-summary-grid" aria-label="Account and plan details">
         <article className="account-summary-card">
           <span className="account-summary-label">Current plan</span>
-          <h2>{isPremium ? 'Premium' : 'Free Tier'}</h2>
-          <p>{isPremium ? 'Unlimited parses and custom layouts.' : 'One parse per month with the standard layout.'}</p>
+          <h2>{tierConfig.name}</h2>
+          <p>{tierLoading ? 'Checking your plan...' : `${tierConfig.name} plan with ${isUnlimited ? 'unlimited' : addressLimit ?? tierConfig.addressLimit} monthly addresses.`}</p>
           <button type="button" className="subscription-button primary" onClick={onManagePlan}>
-            {isPremium ? 'Manage plan' : 'View Premium plan'}
+            {isUnlimited ? 'Manage plan' : 'View plans'}
           </button>
         </article>
         <article className="account-summary-card">
           <span className="account-summary-label">Usage this month</span>
-          <h2>{isPremium ? 'Unlimited' : `${Math.max(0, 1 - (parseCount ?? 0))} / 1 remaining`}</h2>
-          <p>{usageLoading ? 'Refreshing your usage...' : isPremium ? 'Your account has no monthly parse cap.' : `${parseCount ?? 0} parse${parseCount === 1 ? '' : 's'} used this month.`}</p>
+          <h2>{usageLoading ? 'Checking usage...' : usageLabel}</h2>
+          <p>{isUnlimited ? 'Unlimited addresses' : `${addressesRemaining ?? Math.max(0, (addressLimit ?? tierConfig.addressLimit) - (addressesProcessed ?? 0))} addresses remaining`}</p>
           <button type="button" className="subscription-button secondary" onClick={onBack}>Open parser</button>
         </article>
       </section>

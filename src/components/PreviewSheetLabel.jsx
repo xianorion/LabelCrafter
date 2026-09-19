@@ -8,19 +8,21 @@ function PreviewSheetLabel({
   onSelect,
   onMoveStart,
   style,
+  interactive = true,
 }) {
-  const lines = typeof address === 'string' ? address.split(/\r?\n|\\n/) : []
+  const addressText = typeof address === 'string' ? address : address?.text || ''
+  const lines = addressText.split(/\r?\n|\\n/)
 
   return (
-    <div className={`preview-sheet-label ${selected ? 'selected' : ''}`} style={style} onClick={() => onSelect(keyId)}>
-      <button
+    <div className={`preview-sheet-label ${selected ? 'selected' : ''}`} style={style} onClick={interactive ? () => onSelect(keyId) : undefined}>
+      {interactive && <button
         type="button"
         className="preview-drag-handle"
         aria-label="Move label"
         onPointerDown={(event) => onMoveStart(event, keyId)}
       >
         ⤢
-      </button>
+      </button>}
       <div
         className="preview-sheet-label-text"
         style={{

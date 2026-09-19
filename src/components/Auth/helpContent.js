@@ -14,7 +14,7 @@ const etsySteps = [
   {
     number: '03',
     title: 'Print Etsy packing slips',
-    text: "Choose Print packing slips. Etsy will create a PDF; upload that PDF to ParseLab and choose Etsy before parsing.",
+    text: "Choose Print packing slips. Etsy will create a PDF; upload that PDF to LabelCrafter and choose Etsy before crafting.",
     image: "/images/etsy/Step 3. Select print packing slips and you'll get a pdf of the packing slips that you can grive to ParseLab.png",
   },
 ]
@@ -34,8 +34,8 @@ const shopifySteps = [
   },
   {
     number: '03',
-    title: 'Upload the PDF to ParseLab',
-    text: "Return to ParseLab, choose Shopify, and upload the packing-slip PDF. ParseLab will collect the address under each Ship to section for your printable labels.",
+    title: 'Upload the PDF to LabelCrafter',
+    text: "Return to LabelCrafter, choose Shopify, and upload the packing-slip PDF. LabelCrafter will collect the address under each Ship to section for your printable labels.",
   },
 ]
 

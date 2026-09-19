@@ -9,6 +9,7 @@ function PreviewControls({
   onLineSpacingChange,
   onGlobalMoveStart,
   selectedLabel,
+  canResizeLabels,
 }) {
   return (
     <div className="preview-controls">
@@ -22,7 +23,7 @@ function PreviewControls({
         {applyScaleGlobally ? 'Global scale' : 'Selected scale'} <span>{selectedScale.toFixed(1)}×</span>
       </label>
       <label className="preview-checkbox">
-        <input type="checkbox" checked={applyScaleGlobally} onChange={onToggleGlobalScale} />
+        <input type="checkbox" checked={applyScaleGlobally} onChange={onToggleGlobalScale} disabled={!canResizeLabels} />
         <span>Apply to all labels</span>
       </label>
       <input
@@ -33,7 +34,7 @@ function PreviewControls({
         step="0.1"
         value={selectedScale}
         onChange={onScaleChange}
-        disabled={!selectedLabel && !applyScaleGlobally}
+        disabled={!canResizeLabels || (!selectedLabel && !applyScaleGlobally)}
       />
       <label htmlFor="modal-label-line-spacing" className="preview-control-label">
         Line spacing <span>{globalLineSpacing.toFixed(1)}×</span>
