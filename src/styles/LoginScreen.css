@@ -244,6 +244,27 @@
   font-weight: 800;
 }
 
+.site-footer,
+.app-footer {
+  width: min(100%, 1220px);
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 28px;
+}
+
+.site-footer a,
+.app-footer a {
+  color: #315b57;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.app-footer a:hover {
+  color: #e36b4e;
+}
+
 .nav-link:hover,
 .rate-link:hover {
   color: #e36b4e;

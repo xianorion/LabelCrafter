@@ -5,6 +5,7 @@ import AccountView from './AccountView'
 import BillingSetup from './BillingSetup'
 import LoginScreen from './LoginScreen'
 import SubscriptionView from './SubscriptionView'
+import PrivacyPolicyPage from '../PrivacyPolicyPage'
 
 export default function AuthGuard({ children }) {
   const { user, loading: authLoading, signOut, tier, tierConfig, tierLoading, addressesProcessed, addressesRemaining, addressLimit, usageLoading } = useAuth()
@@ -20,6 +21,10 @@ export default function AuthGuard({ children }) {
 
   if (authLoading) {
     return <div className="auth-loading" role="status">Loading your workspace...</div>
+  }
+
+  if (window.location.pathname === '/privacy') {
+    return <PrivacyPolicyPage />
   }
 
   if (!user) {
@@ -91,6 +96,9 @@ export default function AuthGuard({ children }) {
         <button type="button" className="sign-out-button" onClick={signOut}>Sign out</button>
       </div>
       {children}
+      <footer className="app-footer">
+        <a href="/privacy">Privacy Policy</a>
+      </footer>
       <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </div>
   )

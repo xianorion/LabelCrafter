@@ -72,4 +72,18 @@ describe('LoginScreen', () => {
       })
     })
   })
+
+  it('shows a privacy policy footer link on the landing page', () => {
+    window.history.pushState({}, '', '/')
+    renderLogin()
+
+    expect(screen.getByRole('link', { name: /privacy policy/i })).toHaveAttribute('href', '/privacy')
+  })
+
+  it('renders the privacy policy page when the current path is /privacy', () => {
+    window.history.pushState({}, '', '/privacy')
+    renderLogin()
+
+    expect(screen.getByRole('heading', { name: /^privacy policy$/i })).toBeInTheDocument()
+  })
 })
