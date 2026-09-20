@@ -97,7 +97,7 @@ export default function HelpModal({ isOpen, onClose }) {
           </div>
           <button type="button" className="help-close-button" aria-label="Close help guide" onClick={closeModal}>×</button>
         </header>
-
+        <h3 className="help-modal-step">Step 1: Get your Packing slips from Etsy or Shopify</h3>
         <div className="help-platform-tabs help-modal-platform-tabs" role="tablist" aria-label="Packing slip platform">
           {helpPlatforms.map((item) => (
             <button
@@ -135,18 +135,26 @@ export default function HelpModal({ isOpen, onClose }) {
           <p>{step.text}</p>
           <GuideImage image={step.image} label={`${platform} guide: ${step.title}`} />
         </div>
+        <h3 className="help-modal-step">Step 2: Upload your packing slip PDF to LabelCrafter</h3>
+        <p className="help-modal-description">Choose the platform you used to generate the packing slip PDF, then upload the file. LabelCrafter will extract the addresses and create printable labels for you.</p>
+        <GuideImage image="/images/help/SelectAndUploadPDF.png"  />
 
-        <footer className="help-modal-footer">
-          <span>Step {activeStep + 1} of {steps.length}</span>
-          <div>
-            <button type="button" className="secondary-button" onClick={() => setActiveStep((current) => Math.max(0, current - 1))} disabled={activeStep === 0}>Back</button>
-            {activeStep < steps.length - 1 ? (
-              <button type="button" className="export-button" onClick={() => setActiveStep((current) => Math.min(steps.length - 1, current + 1))}>Next step</button>
-            ) : (
-              <button type="button" className="export-button" onClick={closeModal}>Start parsing</button>
-            )}
-          </div>
-        </footer>
+        <h3 className="help-modal-step">Step 3: Print your labels</h3>
+        <p className="help-modal-description">After LabelCrafter processes your packing slip, you can download a PDF of the labels and print them on standard label sheets or choose to format them for printing.</p>
+        <GuideImage image="/images/help/exportButtonOptions.png"  />
+
+        <p className="help-modal-description">For formatting options, you can adjust the scale, line spacing, and label offset. Once everything is set, you can print your labels.</p>
+        <p className="help-modal-description">A1 and A2 in the image below show where you can adjust these settings. B directs you to where you can print your labels.</p>
+        <GuideImage image="/images/help/formattingOptions.png" />
+        <br />
+
+        <p className="help-modal-outro">That’s it! You’re ready to ship your orders with clean, professional labels.</p>
+
+        <p className="help-modal-footnote">LabelCrafter is a free tool for Etsy and Shopify sellers. We do not store your customer addresses.</p>
+
+        <p className="help-modal-contact">Questions? Contact us at <a href="mailto:labelcrafterstudio@gmail.com">labelcrafterstudio@gmail.com</a></p>
+
+     <br />
       </section>
     </div>
   )

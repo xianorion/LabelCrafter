@@ -102,34 +102,38 @@ export default function PreviewLabels({
           {lastResetDate && <p className="layout-reset">Usage reset {new Date(lastResetDate).toLocaleDateString()}</p>}
         </div>
 
-        <div className="preview-controls preview-controls-inline">
-          <PreviewControls
-            selectedScale={selectedScale}
-            applyScaleGlobally={applyScaleGlobally}
-            onToggleGlobalScale={onToggleGlobalScale}
-            onScaleChange={onScaleChange}
-            globalLineSpacing={globalLineSpacing}
-            onLineSpacingChange={onLineSpacingChange}
-            onGlobalMoveStart={onGlobalMoveStart}
-            selectedLabel={selectedLabel}
-            canResizeLabels={canResizeLabels}
-          />
-        </div>
-
         <div className="preview-modal-body">
-          <PrintableLabelSheet
-            addresses={addresses}
-            layout={printLayout}
-            labelPositions={labelPositions}
-            labelScales={labelScales}
-            globalScale={globalScale}
-            applyScaleGlobally={applyScaleGlobally}
-            globalLineSpacing={globalLineSpacing}
-            globalLabelOffset={globalLabelOffset}
-            selectedLabel={selectedLabel}
-            onSelectLabel={onSelectLabel}
-            onLabelMoveStart={onLabelMoveStart}
-          />
+          <div className="preview-modal-split">
+            <div className="preview-sheet-panel">
+              <PrintableLabelSheet
+                addresses={addresses}
+                layout={printLayout}
+                labelPositions={labelPositions}
+                labelScales={labelScales}
+                globalScale={globalScale}
+                applyScaleGlobally={applyScaleGlobally}
+                globalLineSpacing={globalLineSpacing}
+                globalLabelOffset={globalLabelOffset}
+                selectedLabel={selectedLabel}
+                onSelectLabel={onSelectLabel}
+                onLabelMoveStart={onLabelMoveStart}
+              />
+            </div>
+
+            <div className="preview-controls-panel">
+              <PreviewControls
+                selectedScale={selectedScale}
+                applyScaleGlobally={applyScaleGlobally}
+                onToggleGlobalScale={onToggleGlobalScale}
+                onScaleChange={onScaleChange}
+                globalLineSpacing={globalLineSpacing}
+                onLineSpacingChange={onLineSpacingChange}
+                onGlobalMoveStart={onGlobalMoveStart}
+                selectedLabel={selectedLabel}
+                canResizeLabels={canResizeLabels}
+              />
+            </div>
+          </div>
         </div>
       </div>
       {showPaywall && <Paywall onClose={onClosePaywall} />}
