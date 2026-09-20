@@ -30,7 +30,15 @@
 }
 
 .help-modal-header {
+  position: relative;
   border-bottom: 1px solid #e8edf3;
+  justify-content: center;
+  text-align: center;
+}
+
+.help-modal-header > div {
+  width: 100%;
+  padding-right: 42px;
 }
 
 .help-modal-kicker {
@@ -51,6 +59,9 @@
 }
 
 .help-close-button {
+  position: absolute;
+  top: 28px;
+  right: 32px;
   width: 38px;
   height: 38px;
   flex: 0 0 auto;
@@ -112,20 +123,24 @@
 
 .help-platform-tabs {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 18px;
 }
 
 .help-platform-tabs button {
-  border: 1px solid #cbd8e5;
-  border-radius: 999px;
-  padding: 9px 16px;
-  background: #fff;
+  border: 1px solid #d8e1ec;
+  border-radius: 12px;
+  padding: 10px 16px;
+  background: #f6f8fb;
   color: #55708f;
   cursor: pointer;
   font: inherit;
   font-size: 0.82rem;
   font-weight: 800;
+  transition: all 0.2s ease;
 }
 
 .help-platform-tabs button.active,
@@ -133,14 +148,20 @@
   border-color: #183b56;
   background: #183b56;
   color: #fff;
+  box-shadow: 0 8px 18px rgba(24, 59, 86, 0.12);
 }
 
 .help-modal-platform-tabs {
   margin: 20px 32px 0;
+  padding: 8px;
+  border: 1px solid #e6edf6;
+  border-radius: 16px;
+  background: #f5f8fc;
 }
 
 .help-modal-step {
-  padding: 32px;
+  padding: 28px 32px 18px;
+  text-align: center;
   animation: help-step-in 0.22s ease-out;
 }
 
@@ -150,16 +171,26 @@
 }
 
 .help-modal-step h3 {
-  margin: 0 0 10px;
+  margin: 0 auto 10px;
   color: #183b56;
   font-size: 1.45rem;
+  max-width: 720px;
 }
 
 .help-modal-step p {
   max-width: 720px;
-  margin: 0 0 24px;
+  margin: 0 auto 24px;
   color: #607086;
   line-height: 1.65;
+  text-align: center;
+}
+
+.help-modal-description {
+  width: min(100%, 720px);
+  margin: 0 auto 24px;
+  color: #607086;
+  line-height: 1.65;
+  text-align: center;
 }
 
 .help-step-number {
@@ -170,13 +201,15 @@
 }
 
 .help-visual {
-  margin: 0;
+  width: min(100%, 720px);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid #cbd8e5;
   border-radius: 12px;
   background: #f4f7fa;
+  text-align: center;
 }
 
 .help-visual img {

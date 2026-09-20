@@ -70,8 +70,10 @@ function App() {
           onClick={() => setShowPreview(true)}
           disabled={parsing.extractedAddresses.length === 0}
         >
-          Preview labels
+          Format & print labels
         </button>
+        <button type="button" className="secondary-button" onClick={() => window.print()}>Print</button>
+
       </div>
 
       {parsing.parseError && <div className="parse-error" role="alert">{parsing.parseError}</div>}

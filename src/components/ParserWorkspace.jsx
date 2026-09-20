@@ -47,7 +47,7 @@ export default function ParserWorkspace({ addresses, onRemoveAddress, onClearAll
 
       <div className="panel preview-panel">
         <div className="panel-header">
-          <h2>Preview</h2>
+          <h2>Address Layout View</h2>
           <span>{columns * rows} per page</span>
         </div>
 
